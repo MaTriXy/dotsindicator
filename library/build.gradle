@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 27
+  buildToolsVersion "27.0.3"
+
+  defaultConfig {
+    minSdkVersion 16
+    targetSdkVersion 27
+    versionCode 1
+    versionName "1.0"
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
+
+dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  testImplementation 'junit:junit:4.12'
+  implementation 'com.android.support:appcompat-v7:27.1.0'
+  implementation 'com.android.support:support-dynamic-animation:27.1.0'
+}
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+  }
+}
+
+group = 'com.tbuonomo.andrui'
+version = '1.1.0'
+
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+task generateSourcesJar(type: Jar) {
+  from android.sourceSets.main.java.srcDirs
+  classifier 'sources'
+}
+
+artifacts {
+  archives generateSourcesJar
+}
+
+bintray {
+  def Properties localProps = new Properties()
+  localProps.load(new FileInputStream(file('local.properties')))
+
+  user = localProps.getProperty("bintrayUser")
+  key = localProps.getProperty("bintrayApiKey")
+  pkg {
+    repo = 'maven'
+    name = 'dots-indicator'
+
+    version {
+      name = version
+      desc = 'A cool dots indicator for view pager in Android'
+      vcsTag = version
+    }
+
+    licenses = ['Apache-2.0']
+    vcsUrl = 'https://github.com/tommybuonomo/dotsindicator'
+    websiteUrl = 'https://github.com/tommybuonomo/dotsindicator'
+  }
+  configurations = ['archives']
+}
